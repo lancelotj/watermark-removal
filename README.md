@@ -39,25 +39,21 @@ And also a shoutout to [Chu-Tak Li](https://chutakcode.wixsite.com/website) for 
 docker run --rm -v '<path_to_model_dir>:/repo/model' -v '<path_to_input_dir>:/input' -v '<path_to_output_dir>:/output' watermark-removal --checkpoint_dir /repo/model --image '/input/<input_image_file>' --output '/output/<output_image_file>' --watermark_type istock
 ```
 
-### Google colab (broken)
+### Google colab
 
 - use [Google colab](https://research.google.com/colaboratory/)
 
 - First of all, clone this repo
 
       !git clone https://github.com/zuruoke/watermark-removal
+      %cd watermark-removal
 
-- Change Directory to the repo
+- This project now runs on TensorFlow 2.x (tested with 2.21.0). The graph code uses
+  TensorFlow 1 APIs via `tensorflow.compat.v1`, and relies on the legacy Keras 2
+  implementation because TensorFlow 2.16+ ships Keras 3, whose layers rename the
+  checkpoint variables. Install the compatibility packages:
 
-      !cd watermark-removal
-
-- Since Google Colab uses the latest Tensorflow 2x version and this project uses 1.15.0, downgrade to Tensorflow 1.15.0 version and restart the runtime, (`although the new version of Google Colab does not need you to restart the runtime`).
-
-      !pip install tensorflow==1.15.0
-
-- Install tensorflow toolkit [neuralgym](https://github.com/JiahuiYu/neuralgym).
-
-      !pip install git+https://github.com/JiahuiYu/neuralgym
+      !pip install tensorflow==2.21.0 tf_keras==2.21.0 tf_slim==1.1.0 opencv-python Pillow numpy pyyaml
 
 - Download the model dirs using this [link](https://drive.google.com/drive/folders/1xRV4EdjJuAfsX9pQme6XeoFznKXG0ptJ?usp=sharing) and put it under `model/` (rename `checkpoint.txt` to `checkpoint` because sometimes google drive automatically adds .txt after download)
 
@@ -66,6 +62,11 @@ And you're all Set!!
 - Now remove the watermark on the image by runing the `main.py` file
 
       !python main.py --image path-to-input-image --output path-to-output-image --checkpoint_dir model/ --watermark_type istock
+
+> The entrypoint sets `TF_USE_LEGACY_KERAS=1` itself, so no runtime restart is
+> needed. If you import the project inside an already-running kernel instead of
+> launching `main.py` as a subprocess, run the `pip install` cell and restart the
+> runtime so the legacy Keras selection takes effect.
 
 ## Citation
 

@@ -1,2 +1,7 @@
-tensorflow==1.15.5
-opencv-python==4.9.0.80
+tensorflow==2.21.0
+tf_keras==2.21.0
+tf_slim==1.1.0
+opencv-python>=4.10
+Pillow
+numpy
+pyyaml

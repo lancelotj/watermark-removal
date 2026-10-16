@@ -3,15 +3,14 @@ import math
 
 import cv2
 import numpy as np
-import tensorflow as tf
-from tensorflow.contrib.framework.python.ops import add_arg_scope
+import tensorflow.compat.v1 as tf
+
+tf.disable_v2_behavior()
+
+from tf_slim import add_arg_scope
 from PIL import Image, ImageDraw
 
-from neuralgym.ops.layers import resize
-from neuralgym.ops.layers import *
-from neuralgym.ops.loss_ops import *
-from neuralgym.ops.gan_ops import *
-from neuralgym.ops.summary_ops import *
+from wm_ops import resize, conv2d_spectral_norm
 
 
 logger = logging.getLogger()

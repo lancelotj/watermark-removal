@@ -2,16 +2,15 @@
 import logging
 
 import cv2
-import neuralgym as ng
-import tensorflow as tf
-from tensorflow.contrib.framework.python.ops import arg_scope
+import tensorflow.compat.v1 as tf
 
-from neuralgym.models import Model
-from neuralgym.ops.summary_ops import scalar_summary, images_summary
-from neuralgym.ops.summary_ops import gradients_summary
-from neuralgym.ops.layers import flatten, resize
-from neuralgym.ops.gan_ops import gan_hinge_loss
-from neuralgym.ops.gan_ops import random_interpolates
+tf.disable_v2_behavior()
+
+from tf_slim import arg_scope
+
+from wm_ops import flatten, resize
+from wm_ops import scalar_summary, images_summary, gradients_summary
+from wm_ops import gan_hinge_loss, random_interpolates
 
 from inpaint_ops import gen_conv, gen_deconv, dis_conv
 from inpaint_ops import random_bbox, bbox2mask, local_patch, brush_stroke_mask
@@ -19,6 +18,13 @@ from inpaint_ops import resize_mask_like, contextual_attention
 
 
 logger = logging.getLogger()
+
+
+class Model:
+    """Base model class (replaces ``neuralgym.models.Model``)."""
+
+    def __init__(self, name=''):
+        self.name = name
 
 
 class InpaintCAModel(Model):

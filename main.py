@@ -1,12 +1,21 @@
 import argparse
+import os
+
+# TensorFlow 2.21 ships Keras 3, whose layers are incompatible with this
+# project's TF1 graph code and rename the checkpoint variables. Select the
+# bundled Keras 2 implementation (``tf_keras``) before TensorFlow is imported
+# so ``tf.layers`` keeps working and the pretrained checkpoints keep loading.
+os.environ.setdefault("TF_USE_LEGACY_KERAS", "1")
 
 from PIL import Image
 import cv2
 import numpy as np
-from preprocess_image import preprocess_image
-import tensorflow as tf
-import neuralgym as ng
+import tensorflow.compat.v1 as tf
 
+tf.disable_v2_behavior()
+
+from preprocess_image import preprocess_image
+from wm_config import Config
 from inpaint_model import InpaintCAModel
 
 parser = argparse.ArgumentParser()
@@ -23,7 +32,7 @@ parser.add_argument('--checkpoint_dir', default='model/', type=str,
 
 
 if __name__ == "__main__":
-    FLAGS = ng.Config('inpaint.yml')
+    FLAGS = Config('inpaint.yml')
     # ng.get_gpus(1)
     args, unknown = parser.parse_known_args()
 
@@ -47,7 +56,7 @@ if __name__ == "__main__":
             for var in vars_list:
                 vname = var.name
                 from_name = vname
-                var_value = tf.contrib.framework.load_variable(
+                var_value = tf.train.load_variable(
                     args.checkpoint_dir, from_name)
                 assign_ops.append(tf.assign(var, var_value))
             sess.run(assign_ops)
